@@ -12,15 +12,5 @@ import java.util.UUID;
 
 @SpringBootTest
 public class RocketmqApplicationTests {
-    @Value("${rocketmq.consumer.topic}")
-    private String topic;
-    @Autowired
-    Producer producer;
-    @Autowired
-    private RocketMQTemplate rocketMQTemplate;
-    @Test
-    public void testProducer() {
-        String msg = UUID.randomUUID().toString();
-        rocketMQTemplate.convertAndSend(topic, msg);
-    }
+
 }

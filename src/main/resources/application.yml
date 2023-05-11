@@ -1,9 +1,4 @@
-rocketmq:
-  # 名字服务器地址
-  name-server: 127.0.0.1:9876
-  # 生产者组
-  producer:
-    group: producer_group
-  consumer:
-    topic: consumer_topic
-    group: consumer_group
+netty:
+  websocket:
+    port: 9875
+    ip: 127.0.0.1
