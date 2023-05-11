@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.annotation.Resource;
 import java.util.UUID;
 
 @SpringBootTest
@@ -15,11 +16,11 @@ public class RocketmqApplicationTests {
     private String topic;
     @Autowired
     Producer producer;
-    @Autowired(required = false)
+    @Autowired
     private RocketMQTemplate rocketMQTemplate;
     @Test
     public void testProducer() {
         String msg = UUID.randomUUID().toString();
-
+        rocketMQTemplate.convertAndSend(topic, msg);
     }
 }
