@@ -11,6 +11,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.mqtt.MqttDecoder;
 import io.netty.handler.codec.mqtt.MqttEncoder;
 import io.netty.handler.timeout.IdleStateHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -26,13 +27,12 @@ import org.springframework.stereotype.Component;
 
 import java.net.InetSocketAddress;
 
+@Slf4j
 @Component
 public class NettyBootstrapRunner
         implements ApplicationRunner,
         ApplicationListener<ContextClosedEvent>,
         ApplicationContextAware {
-    private static final Logger LOGGER = LoggerFactory.getLogger(NettyBootstrapRunner.class);
-
     @Value("${netty.websocket.port}")
     private int port;
 
@@ -51,7 +51,7 @@ public class NettyBootstrapRunner
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
-            LOGGER.info("bootstrapping mqtt netty server");
+            log.info("bootstrapping mqtt netty server");
             ServerBootstrap serverBootstrap = new ServerBootstrap();
             serverBootstrap.group(bossGroup, workerGroup);
             serverBootstrap.channel(NioServerSocketChannel.class);
@@ -83,6 +83,6 @@ public class NettyBootstrapRunner
         if (this.serverChannel != null) {
             this.serverChannel.close();
         }
-        LOGGER.info("netty 服务停止");
+        log.info("netty 服务停止");
     }
 }
