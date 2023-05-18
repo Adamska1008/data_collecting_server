@@ -10,9 +10,11 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.mqtt.MqttDecoder;
 import io.netty.handler.codec.mqtt.MqttEncoder;
+import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -37,6 +39,9 @@ public class NettyBootstrapRunner
     @Value("${netty.websocket.ip}")
     private String ip;
 
+    @Autowired
+    BootNettyMqttChannelInboundHandler handler;
+
     private ApplicationContext applicationContext;
 
     private Channel serverChannel;
@@ -53,10 +58,13 @@ public class NettyBootstrapRunner
             serverBootstrap.localAddress(new InetSocketAddress(this.ip, this.port));
             serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
                 @Override
-                protected void initChannel(SocketChannel ch) throws Exception {
+                protected void initChannel(SocketChannel ch) {
                     ChannelPipeline channelPipeline = ch.pipeline();
+                    // 设置读写空闲超时时间
+                    channelPipeline.addLast(new IdleStateHandler(600, 600, 1200));
                     channelPipeline.addLast("encoder", MqttEncoder.INSTANCE);
                     channelPipeline.addLast("decoder", new MqttDecoder());
+                    channelPipeline.addLast(handler);
                 }
             });
         } finally {
@@ -75,6 +83,6 @@ public class NettyBootstrapRunner
         if (this.serverChannel != null) {
             this.serverChannel.close();
         }
-        LOGGER.info("websocket 服务停止");
+        LOGGER.info("netty 服务停止");
     }
 }
