@@ -81,6 +81,7 @@ public class BootNettyMqttChannelInboundHandler extends ChannelInboundHandlerAda
                 var mqttMessageIdVariableHeaderBack = MqttMessageIdVariableHeader.from(mqttPublishMessage.variableHeader().packetId());
                 var mqttMessageBack = new MqttMessage(mqttFixedHeaderBack,mqttMessageIdVariableHeaderBack);
                 log.info("back--"+mqttMessageBack.toString());
+
             }
         }
     }
