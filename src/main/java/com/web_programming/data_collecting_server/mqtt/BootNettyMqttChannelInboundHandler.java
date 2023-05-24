@@ -50,20 +50,14 @@ public class BootNettyMqttChannelInboundHandler extends ChannelInboundHandlerAda
 
     public void publish_ack(Channel channel, MqttMessage message) {
         // 像数据库中存储数据
-        JSONObject payload = (JSONObject) message.payload();
-        log.debug("read publish message, payload: " + payload);
-        SensorData sensorData = new SensorData();
-        sensorData.setSensorId(payload.getIntValue("sensor_id"));
-        sensorData.setAcquisitionTime(payload.getSqlDate("acquisition_time"));
-        sensorData.setRealTimeData(payload.getString("read_time_data"));
-        sensorDataMapper.insert(sensorData);
-
         var mqttPublishMessage = (MqttPublishMessage) message;
+        String payload = mqttPublishMessage.payload().toString();
+        log.info("publish data--" + payload);
         var mqttFixedHeader = mqttPublishMessage.fixedHeader();
         var qos = (MqttQoS) mqttFixedHeader.qosLevel();
         var headBytes = new byte[mqttPublishMessage.payload().readableBytes()];
         mqttPublishMessage.payload().readBytes(headBytes);
-        var data = new String(headBytes);
+        // TODO: 将消息进行预处理之后保存到数据库中
         switch (qos) {
             case AT_LEAST_ONCE -> {
                 var mqttMessageIdVariableHeaderBack = MqttMessageIdVariableHeader.from(mqttPublishMessage.variableHeader().packetId());
@@ -80,7 +74,7 @@ public class BootNettyMqttChannelInboundHandler extends ChannelInboundHandlerAda
                 //	构建返回报文， 可变报头
                 var mqttMessageIdVariableHeaderBack = MqttMessageIdVariableHeader.from(mqttPublishMessage.variableHeader().packetId());
                 var mqttMessageBack = new MqttMessage(mqttFixedHeaderBack,mqttMessageIdVariableHeaderBack);
-                log.info("back--"+mqttMessageBack.toString());
+                log.info("back--"+mqttMessageBack);
 
             }
         }

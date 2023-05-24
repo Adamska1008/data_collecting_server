@@ -1,10 +1,7 @@
 package com.web_programming.data_collecting_server.mqtt;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -51,7 +48,7 @@ public class NettyBootstrapRunner
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
-            log.info("bootstrapping mqtt netty server");
+
             ServerBootstrap serverBootstrap = new ServerBootstrap();
             serverBootstrap.group(bossGroup, workerGroup);
             serverBootstrap.channel(NioServerSocketChannel.class);
@@ -64,9 +61,16 @@ public class NettyBootstrapRunner
                     channelPipeline.addLast(new IdleStateHandler(600, 600, 1200));
                     channelPipeline.addLast("encoder", MqttEncoder.INSTANCE);
                     channelPipeline.addLast("decoder", new MqttDecoder());
-                    channelPipeline.addLast(handler);
+                    channelPipeline.addLast(new BootNettyMqttChannelInboundHandler());
                 }
             });
+            ChannelFuture f = serverBootstrap.bind(port).sync();
+            if(f.isSuccess()){
+                log.info("bootstrapping mqtt netty server on " + ip + ":" + port);
+                f.channel().closeFuture().sync();
+            } else {
+                System.out.println("startup fail port = " + port);
+            }
         } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();

@@ -1,5 +1,3 @@
-use test;
-
 # 1:呼吸机 2:血氧仪 3:肺功能仪 4:空气净化器 5:温湿度计
 create table sensor(
     id INTEGER PRIMARY KEY ,

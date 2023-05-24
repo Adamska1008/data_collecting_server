@@ -6,11 +6,11 @@ import com.web_programming.data_collecting_server.service.QuestionnaireService;
 import com.web_programming.data_collecting_server.service.SensorDataService;
 import com.web_programming.data_collecting_server.util.result.Result;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/client")
 public class clientController {
