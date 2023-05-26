@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 @Data
 @TableName("sensor_data")
@@ -13,7 +13,7 @@ public class SensorData {
     private int sensorId;
 
     @TableField("acquisition_time")
-    private Date acquisitionTime;
+    private Timestamp acquisitionTime;
 
     @TableField("real_time_data")
     private String realTimeData;

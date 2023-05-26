@@ -1,5 +1,6 @@
 package com.web_programming.data_collecting_server.mqtt;
 
+import com.alibaba.fastjson.JSONObject;
 import com.web_programming.data_collecting_server.common.Filter;
 import com.web_programming.data_collecting_server.mapper.SensorDataMapper;
 import io.netty.channel.Channel;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.sql.Time;
+import java.sql.Timestamp;
 
 @Slf4j
 @Component
@@ -58,7 +61,8 @@ public class BootNettyMqttChannelInboundHandler extends ChannelInboundHandlerAda
         }
         var mqttFixedHeader = mqttPublishMessage.fixedHeader();
         var qos = (MqttQoS) mqttFixedHeader.qosLevel();
-        // TODO: 将消息进行预处理之后保存到数据库中
+        var id = extractId(payload);
+        var time = extractTime(payload);
         switch (qos) {
             case AT_LEAST_ONCE -> {
                 var mqttMessageIdVariableHeaderBack = MqttMessageIdVariableHeader.from(mqttPublishMessage.variableHeader().packetId());
@@ -76,8 +80,21 @@ public class BootNettyMqttChannelInboundHandler extends ChannelInboundHandlerAda
                 var mqttMessageIdVariableHeaderBack = MqttMessageIdVariableHeader.from(mqttPublishMessage.variableHeader().packetId());
                 var mqttMessageBack = new MqttMessage(mqttFixedHeaderBack,mqttMessageIdVariableHeaderBack);
                 log.info("back--"+mqttMessageBack);
-
+                channel.writeAndFlush(mqttMessageBack);
             }
         }
+    }
+
+    private int extractId(String payload) {
+        var object = JSONObject.parseObject(payload);
+        var id = object.getString("id");
+        var dotPos = id.indexOf('.');
+        var number = id.substring(dotPos);
+        return Integer.parseInt(number);
+    }
+
+    private Timestamp extractTime(String payload) {
+        var object = JSONObject.parseObject(payload);
+        return object.getTimestamp("time");
     }
 }
