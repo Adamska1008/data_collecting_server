@@ -1,19 +1,17 @@
 package com.web_programming.data_collecting_server.mqtt;
 
-import com.alibaba.fastjson.JSONObject;
-import com.web_programming.data_collecting_server.entity.SensorData;
-import com.web_programming.data_collecting_server.mapper.QuestionnaireMapper;
+import com.web_programming.data_collecting_server.common.Filter;
 import com.web_programming.data_collecting_server.mapper.SensorDataMapper;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.mqtt.*;
+import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.sql.Date;
 
 @Slf4j
 @Component
@@ -51,12 +49,15 @@ public class BootNettyMqttChannelInboundHandler extends ChannelInboundHandlerAda
     public void publish_ack(Channel channel, MqttMessage message) {
         // 像数据库中存储数据
         var mqttPublishMessage = (MqttPublishMessage) message;
-        String payload = mqttPublishMessage.payload().toString();
+        String payload = mqttPublishMessage.payload().toString(CharsetUtil.UTF_8);
         log.info("publish data--" + payload);
+        var filter = new Filter();
+        // 若消息不合法则直接不处理
+        if (!filter.common(payload)) {
+            return;
+        }
         var mqttFixedHeader = mqttPublishMessage.fixedHeader();
         var qos = (MqttQoS) mqttFixedHeader.qosLevel();
-        var headBytes = new byte[mqttPublishMessage.payload().readableBytes()];
-        mqttPublishMessage.payload().readBytes(headBytes);
         // TODO: 将消息进行预处理之后保存到数据库中
         switch (qos) {
             case AT_LEAST_ONCE -> {
