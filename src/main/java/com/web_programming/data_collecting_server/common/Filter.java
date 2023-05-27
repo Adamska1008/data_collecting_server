@@ -7,7 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 // 其用于过滤不合理的数据
 // 输入值为一个数据库中的real_time_data，内容包含反序列化处理
 public class Filter {
-    public boolean common(String msg) {
+    public static boolean common(String msg) {
         var object = JSON.parseObject(msg);
         var id = object.getString("id");
         if (id.startsWith("呼吸机")) {
@@ -25,26 +25,26 @@ public class Filter {
         }
     }
 
-    public boolean commonBreathing(JSONObject object) {
+    public static boolean commonBreathing(JSONObject object) {
         int freq = object.getIntValue("呼吸频率");
         int wet = object.getIntValue("潮气量");
         int dens = object.getIntValue("氧浓度");
         return freq >= 16 && freq <= 30 && wet >= 6 && wet <= 15 && dens >= 0 && dens <= 50;
     }
 
-    public boolean commonOximeter(JSONObject object) {
+    public static boolean commonOximeter(JSONObject object) {
         return true;
     }
 
-    public boolean commonSpirometer(JSONObject object) {
+    public static boolean commonSpirometer(JSONObject object) {
         return true;
     }
 
-    public boolean commonAirPurifier(JSONObject object) {
+    public static boolean commonAirPurifier(JSONObject object) {
         return true;
     }
 
-    public boolean validHygrothermograph(JSONObject object) {
+    public static boolean validHygrothermograph(JSONObject object) {
         return true;
     }
 

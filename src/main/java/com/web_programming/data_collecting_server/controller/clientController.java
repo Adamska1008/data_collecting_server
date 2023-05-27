@@ -8,6 +8,7 @@ import com.web_programming.data_collecting_server.util.result.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @CrossOrigin
@@ -28,9 +29,9 @@ public class clientController {
         return Result.fail();
     }
 
-    @GetMapping("data/{clientId}")
-    public Result getSensorData(@PathVariable int clientId) {
-        Map<String,String> res= sensorDataService.getData(clientId);
+    @GetMapping("data/{groupId}")
+    public Result getSensorData(@PathVariable int groupId) {
+        List<Object> res= sensorDataService.getData(groupId);
         return Result.ok(res);
     }
 
@@ -39,7 +40,6 @@ public class clientController {
         int grade = questionnaireService.getGrade(clientId);
         return Result.ok(grade);
     }
-
 
 
 }
