@@ -13,5 +13,4 @@ public class DataCollectingServerApplication {
     public static void main(String[] args) {
         SpringApplication.run(DataCollectingServerApplication.class, args);
     }
-
 }

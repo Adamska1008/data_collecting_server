@@ -33,19 +33,24 @@ public class Filter {
     }
 
     public boolean commonOximeter(JSONObject object) {
-        return true;
+        int bloodOxygenSaturation = object.getIntValue("血氧饱和度");
+        int pulseRate = object.getIntValue("脉率");
+        return bloodOxygenSaturation >= 94 && bloodOxygenSaturation <= 98 && pulseRate >= 60 && pulseRate <= 90;
     }
 
     public boolean commonSpirometer(JSONObject object) {
-        return true;
+        int flowPeak = object.getIntValue("呼气流量峰值");
+        double vitalCapacity = object.getDoubleValue("用力肺活量");
+        return flowPeak >= 180 && flowPeak <= 600 && vitalCapacity >= 2.730 && vitalCapacity <= 3.971;
     }
 
     public boolean commonAirPurifier(JSONObject object) {
-        return true;
+        int pm2dot5 = object.getIntValue("PM2.5");
+        return pm2dot5 >= 0 && pm2dot5 <= 115;
     }
 
     public boolean validHygrothermograph(JSONObject object) {
-        return true;
+        int temperature = object.getIntValue("温度");
+        return temperature >= 24 && temperature <= 26;
     }
-
 }
