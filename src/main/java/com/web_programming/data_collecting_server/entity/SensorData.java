@@ -17,4 +17,6 @@ public class SensorData {
 
     @TableField("real_time_data")
     private String realTimeData;
+
+
 }
