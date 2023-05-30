@@ -2,6 +2,7 @@ package com.web_programming.data_collecting_server.mqtt;
 
 import com.alibaba.fastjson.JSONObject;
 import com.web_programming.data_collecting_server.common.Filter;
+import com.web_programming.data_collecting_server.entity.SensorData;
 import com.web_programming.data_collecting_server.mapper.SensorDataMapper;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -63,6 +64,11 @@ public class BootNettyMqttChannelInboundHandler extends ChannelInboundHandlerAda
         var qos = (MqttQoS) mqttFixedHeader.qosLevel();
         var id = extractId(payload);
         var time = extractTime(payload);
+        SensorData sensorData = new SensorData();
+        sensorData.setSensorId(id);
+        sensorData.setAcquisitionTime(time);
+        sensorData.setRealTimeData(payload);
+        sensorDataMapper.insert(sensorData);
         switch (qos) {
             case AT_LEAST_ONCE -> {
                 var mqttMessageIdVariableHeaderBack = MqttMessageIdVariableHeader.from(mqttPublishMessage.variableHeader().packetId());
