@@ -20,8 +20,13 @@ import java.sql.Timestamp;
 @Slf4j
 @Component
 public class BootNettyMqttChannelInboundHandler extends ChannelInboundHandlerAdapter {
-    @Autowired
     SensorDataMapper sensorDataMapper;
+
+    @Autowired
+    public BootNettyMqttChannelInboundHandler(SensorDataMapper sensorDataMapper) {
+        this.sensorDataMapper = sensorDataMapper;
+    }
+
     /*
     从客户端接受新数据时会调用这个方法
      */
@@ -57,9 +62,6 @@ public class BootNettyMqttChannelInboundHandler extends ChannelInboundHandlerAda
         log.info("publish data--" + payload);
         var filter = new Filter();
         // 若消息不合法则直接不处理
-        if (!filter.common(payload)) {
-            return;
-        }
         var mqttFixedHeader = mqttPublishMessage.fixedHeader();
         var qos = (MqttQoS) mqttFixedHeader.qosLevel();
         var id = extractId(payload);
@@ -95,7 +97,7 @@ public class BootNettyMqttChannelInboundHandler extends ChannelInboundHandlerAda
         var object = JSONObject.parseObject(payload);
         var id = object.getString("id");
         var dotPos = id.indexOf('.');
-        var number = id.substring(dotPos);
+        var number = id.substring(dotPos + 1);
         return Integer.parseInt(number);
     }
 

@@ -1,6 +1,6 @@
 netty:
   websocket:
-    port: 7788
+    port: 7789
     ip: 127.0.0.1
 sever:
   port: 8888

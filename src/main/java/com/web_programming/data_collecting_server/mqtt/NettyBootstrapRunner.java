@@ -1,5 +1,6 @@
 package com.web_programming.data_collecting_server.mqtt;
 
+import com.web_programming.data_collecting_server.mapper.SensorDataMapper;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -37,7 +38,7 @@ public class NettyBootstrapRunner
     private String ip;
 
     @Autowired
-    BootNettyMqttChannelInboundHandler handler;
+    SensorDataMapper sensorDataMapper;
 
     private ApplicationContext applicationContext;
 
@@ -61,7 +62,7 @@ public class NettyBootstrapRunner
                     channelPipeline.addLast(new IdleStateHandler(600, 600, 1200));
                     channelPipeline.addLast("encoder", MqttEncoder.INSTANCE);
                     channelPipeline.addLast("decoder", new MqttDecoder());
-                    channelPipeline.addLast(new BootNettyMqttChannelInboundHandler());
+                    channelPipeline.addLast(new BootNettyMqttChannelInboundHandler(sensorDataMapper));
                 }
             });
             ChannelFuture f = serverBootstrap.bind(port).sync();

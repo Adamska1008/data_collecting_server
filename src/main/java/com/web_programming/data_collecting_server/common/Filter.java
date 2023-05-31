@@ -11,15 +11,15 @@ public class Filter {
         var object = JSON.parseObject(msg);
         var id = object.getString("id");
         if (id.startsWith("呼吸机")) {
-            return commonBreathing(object);
+            return commonBreathing(object.getJSONObject("data"));
         } else if (id.startsWith("血氧仪")) {
-            return commonOximeter(object);
+            return commonOximeter(object.getJSONObject("data"));
         } else if (id.startsWith("肺功能仪")){
-            return commonSpirometer(object);
+            return commonSpirometer(object.getJSONObject("data"));
         } else if (id.startsWith("空气净化器")){
-            return commonAirPurifier(object);
+            return commonAirPurifier(object.getJSONObject("data"));
         } else if (id.startsWith("温湿度计")) {
-            return validHygrothermograph(object);
+            return validHygrothermograph(object.getJSONObject("data"));
         } else {
             return false;
         }
